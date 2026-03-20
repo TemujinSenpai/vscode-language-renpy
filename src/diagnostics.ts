@@ -69,7 +69,7 @@ const rxStoreCheck = /\s+store\.(\w+)[^a-zA-Z_]?/g;
 const rxTabCheck = /^(\t+)/g;
 const rsComparisonCheck = /\s+(if|while)\s+(\w+)\s*(=)\s*(\w+)\s*/g;
 // Similar to "//@ts-nocheck", if the first line of a Ren'Py file starts with comment "#@renpy-filename:ignore" then Filename Issues will be ignored for that file
-const rxIgnoreFilename = /^\s*#\s*@Ren'?Py-Filename\s*:\s*(Ignore|Disable)/i;
+const rxIgnoreThisFilename = /^\s*#\s*@Ren'?Py-Filename\s*:\s*(Ignore|Disable)/i;
 
 const diagnosticModeEvents: Disposable[] = [];
 
@@ -121,7 +121,7 @@ function refreshDiagnostics(doc: TextDocument, diagnosticCollection: DiagnosticC
     //and may not begin with "00", as Ren'Py uses such files for its own purposes.
     const ignoreThisFilename: string = !!doc.lineAt(0).text.match(rxIgnoreFilename);
     const checkFilenames: string = config.warnOnInvalidFilenameIssues;
-    if (!ignoreThisFilename && checkFilenames.toLowerCase() !== "disabled") {
+    if (checkFilenames.toLowerCase() !== "disabled" && !ignoreThisFilename) {
         let severity = DiagnosticSeverity.Error;
         if (checkFilenames.toLowerCase() === "warning") {
             severity = DiagnosticSeverity.Warning;
